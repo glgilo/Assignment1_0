@@ -113,6 +113,12 @@ void Session::start() {
             log->act(*this);
             actionsLog.push_back(log);
         }
+        if(command == "deleteuser"){
+            cin >> first;
+            BaseAction *deleteuser = new DeleteUser();
+            deleteuser->act(*this);
+            actionsLog.push_back(deleteuser);
+        }
     }
     cout <<"you enterd" << command; //stam hadpsa!@#!@#
 

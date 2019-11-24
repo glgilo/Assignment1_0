@@ -25,12 +25,11 @@ void BaseAction::error(const std::string &_errorMsg) {
 
 void CreateUser::act(Session &sess) {
     complete();
-    cout << sess.getuserMap().size()<< endl;
     if(sess.getsecond() != "len" && sess.getsecond() != "rer" && sess.getsecond() != "gen"){
-        error("NOT valid algorithm");
+        error("Not valid algorithm");
     }
     else if(sess.getuserMap().count(sess.getfirst()) != 0){
-        error("the new user name is already taken");
+        error("The new user name is already taken");
     }
 
     if(sess.getsecond() == "len"){
@@ -46,7 +45,7 @@ void CreateUser::act(Session &sess) {
         User *newuse = new GenreRecommenderUser(sess.getfirst());
         sess.addusermap(sess.getfirst(),newuse);
     }
-
+    //cout << sess.getuserMap().size()<< endl;
 }
 std::string CreateUser::toString() const {
     return substring("CreateUser");
@@ -64,6 +63,21 @@ void ChangeActiveUser::act(Session &sess) {
 }
 string ChangeActiveUser::toString() const {
     return "basn";
+}
+
+void DeleteUser::act(Session &sess){
+    string userToDel = sess.getfirst();
+    if (sess.getuserMap().count(userToDel) == 0){
+        error("There is no such user");
+    } else {
+        sess.getuserMap().erase(userToDel);
+        complete();
+    }
+    cout<<sess.getuserMap().size()<<endl;
+}
+
+string DeleteUser::toString() const {
+    return "DeleteUser";
 }
 
 std::string PrintWatchHistory::toString() const {
