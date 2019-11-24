@@ -37,7 +37,7 @@ Session::Session(const std::string &_configFilePath) {
         }
 
     }
-    User *newuser = new LengthRecommenderUser("len");
+    User *newuser = new LengthRecommenderUser("deafult");
     addusermap("deafult",newuser);
     activeUser = newuser;
 }
