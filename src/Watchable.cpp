@@ -19,6 +19,15 @@ std::string Movie::toString() const {
 Watchable* Movie::getNextWatchable(Session &) const {
     return nullptr; //change later
 }
+
+std::string Movie::getname() const {
+    return name;
+}
+
+std::string Episode::getname() const {
+    return seriesName + " "  + "S" + std::to_string(season) + "E" +std::to_string(episode) ;
+}
+
 Episode::Episode(long _id, const std::string &_seriesName, int _length, int _season, int _episode, const std::vector<std::string> &_tags):  Watchable(_id, _length, _tags), season(_season), episode(_episode), seriesName(_seriesName) {}
 std::string Episode::toString() const {
     std::string outputtags = "";

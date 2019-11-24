@@ -73,7 +73,6 @@ void DeleteUser::act(Session &sess){
         sess.deleteUser(userToDel);
         complete();
     }
-    //cout<<sess.getuserMap().size()<<endl;
 }
 
 string DeleteUser::toString() const {
@@ -95,7 +94,7 @@ std::string PrintWatchHistory::toString() const {
 void Watch::act(Session &sess) {
     long id = std::stol(sess.getfirst());
     if(id>0 && id<=sess.getcontent().size()){
-        cout <<sess.getcontent().at(id-1)->toString()<<endl;
+        cout <<sess.getcontent().at(id-1)->getname()<<endl;
         Watchable* watch = sess.getcontent().at(id-1);
       sess.getActiveUser().addtohistory(watch);
         complete();
