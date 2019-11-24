@@ -64,6 +64,14 @@ std::unordered_map <std::string,User*> Session::getuserMap() {
     return userMap;
 }
 
+void Session::deleteUser(std::string userToDel){
+    userMap.erase(userToDel);
+}
+
+//void Session::duplicateUser(std::string userToDup, User* newUser) {
+//    newUser = userMap[userToDup];
+//}
+
 void Session::addusermap(std::string _name, User *_newuse) {
     userMap[_name] = _newuse;
 }

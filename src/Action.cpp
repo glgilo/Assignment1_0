@@ -70,14 +70,22 @@ void DeleteUser::act(Session &sess){
     if (sess.getuserMap().count(userToDel) == 0){
         error("There is no such user");
     } else {
-        sess.getuserMap().erase(userToDel);
+        sess.deleteUser(userToDel);
         complete();
     }
-    cout<<sess.getuserMap().size()<<endl;
+    //cout<<sess.getuserMap().size()<<endl;
 }
 
 string DeleteUser::toString() const {
     return "DeleteUser";
+}
+
+void DuplicateUser::act(Session &sess){
+
+}
+
+string DuplicateUser::toString() const {
+    return "DuplicateUser";
 }
 
 std::string PrintWatchHistory::toString() const {

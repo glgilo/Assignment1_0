@@ -21,6 +21,8 @@ public:
     std::string getfirst();
     std::string getsecond();
     std::unordered_map<std::string,User*> getuserMap();
+    void deleteUser(std::string);
+//    void duplicateUser(std::string, User*);
     void addusermap(std::string,User*);
     std::vector<Watchable*>& getcontent();
     std::vector<BaseAction*>& getactionsLog();
