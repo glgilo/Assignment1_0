@@ -53,14 +53,17 @@ std::string CreateUser::toString() const {
 }
 
 void ChangeActiveUser::act(Session &sess) {
-    std::string userc = sess.getfirst();
-    if(sess.getuserMap().count(userc) == 0){
+    string userc = sess.getfirst();
+    if (sess.getuserMap().count(userc) == 0) {
         error("there is no such user");
-    } else{
-
-        sess.changeactiveuser(sess.getActiveUser());//ajkogjoagojadfgnho@#$#$%$^$
+    } else {
+        User *userTemp = sess.getuserMap()[userc];
+        sess.changeactiveuser(userTemp);
+        complete();
     }
-    sess.getActiveUser() = sess.getuserMap().
+}
+string ChangeActiveUser::toString() const {
+    return "basn";
 }
 
 std::string PrintWatchHistory::toString() const {

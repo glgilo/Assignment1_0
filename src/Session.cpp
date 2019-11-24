@@ -4,6 +4,7 @@
 #include "../include/Watchable.h"
 #include "../include/json.hpp"
 #include "../include/User.h"
+#include "../include/Action.h"
 //std::ifstream config1_file("../config1.json", std::ifstream::binary);
 //config1_file >> content;
 
