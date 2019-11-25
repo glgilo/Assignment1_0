@@ -23,6 +23,10 @@ void BaseAction::error(const std::string &_errorMsg) {
     cout << errorMsg << endl;
 }
 
+std::string BaseAction::getErrorMsg() const {
+    return errorMsg;
+}
+
 void CreateUser::act(Session &sess) {
     complete();
     if(sess.getsecond() != "len" && sess.getsecond() != "rer" && sess.getsecond() != "gen"){
@@ -32,19 +36,21 @@ void CreateUser::act(Session &sess) {
         error("The new user name is already taken");
     }
 
-    if(sess.getsecond() == "len"){
+    else if(sess.getsecond() == "len"){
         User *newuse = new LengthRecommenderUser(sess.getfirst());
         sess.addusermap(sess.getfirst(),newuse);
    }
-    if(sess.getsecond() == "rer"){
+    else if(sess.getsecond() == "rer"){
         User *newuse = new RerunRecommenderUser(sess.getfirst());
         sess.addusermap(sess.getfirst(),newuse);
 
     }
-    if(sess.getsecond() == "gen"){
+    else if(sess.getsecond() == "gen"){
         User *newuse = new GenreRecommenderUser(sess.getfirst());
         sess.addusermap(sess.getfirst(),newuse);
     }
+    if(getStatus() == COMPLETED){
+        cout << "gffg" << endl;}
     //cout << sess.getuserMap().size()<< endl;
 }
 std::string CreateUser::toString() const {
@@ -76,7 +82,7 @@ void DeleteUser::act(Session &sess){
 }
 
 string DeleteUser::toString() const {
-    return substring("DeleteUser");
+    return "DeleteUser";
 }
 
 void DuplicateUser::act(Session &sess){
@@ -94,14 +100,14 @@ void PrintContentList::act(Session &sess) {
 }
 
 string PrintContentList::toString() const {
-    return substring("PrintContentList");
+    return "PrintContentList";
 }
 
 void PrintWatchHistory::act(Session &sess) {
     vector<Watchable*> history = sess.getActiveUser().get_history();
     cout << "Watch history for " + sess.getActiveUser().getName() << endl;
     for (int i = 0; i < history.size(); i++){
-        cout << to_string(history[i]->getid()) + ". " + history[i]->getname() <<endl;
+        cout << to_string(i+1) + ". " + history[i]->getname() <<endl;
     }
 }
 
@@ -128,11 +134,11 @@ std::string Watch::toString() const {
 }
 
 void PrintActionsLog::act(Session &sess) {
-    cout<<sess.getactionsLog().size()<<endl;
+//    cout<<sess.getactionsLog().size()<<endl;
     //for(BaseAction* baseaction: sess.getactionsLog()){
-    for (int i = sess.getactionsLog().size()-1; i > 0; i--){
+    for (int i = sess.getactionsLog().size()-1; i >= 0; i--){
         //cout<<substring(baseaction->toString())<<endl;
-        cout<<substring(sess.getactionsLog().at(i)->toString())<<endl;
+        cout<<substring(sess.getactionsLog().at(i)->toString(), sess.getactionsLog().at(i)->getStatus(), sess.getactionsLog().at(i)->getErrorMsg()) <<endl;
     }
     complete();
 }
@@ -141,9 +147,9 @@ std::string PrintActionsLog::toString() const {
     return "PrintActionsLog";
 }
 
-std::string BaseAction::substring(std::string action) const{
-    if(status == ERROR){
-        return action + " ERROR: " + errorMsg;
+std::string BaseAction::substring(std::string action, ActionStatus action1, std::string errormsg) const{
+    if(action1 == ERROR){
+        return action + " ERROR: " + errormsg;
     }
     else{
         return action + " COMPLETED";
