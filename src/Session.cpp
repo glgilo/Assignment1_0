@@ -103,29 +103,42 @@ void Session::start() {
             newuser->act(*this);
             actionsLog.push_back(newuser);
         }
-        if(command == "changeuser"){
+        else if(command == "changeuser"){
             cin >> first;
             BaseAction *changeuser = new ChangeActiveUser();
             changeuser->act(*this);
             actionsLog.push_back(changeuser);
         }
 
-        if(command == "watch"){
+        else if(command == "watch"){
             cin >> first;
             BaseAction *watch = new Watch();
             watch->act(*this);
             actionsLog.push_back(watch);
         }
-        if(command == "log"){
+        else if(command == "log"){
             BaseAction *log = new PrintActionsLog();
             log->act(*this);
             actionsLog.push_back(log);
         }
-        if(command == "deleteuser"){
+        else if(command == "deleteuser"){
             cin >> first;
             BaseAction *deleteuser = new DeleteUser();
             deleteuser->act(*this);
             actionsLog.push_back(deleteuser);
+        }
+        else if (command == "content"){
+            BaseAction *content = new PrintContentList();
+            content->act(*this);
+            actionsLog.push_back(content);
+        }
+        else if (command == "watchlist"){
+            BaseAction *watchlist = new PrintWatchHistory();
+            watchlist->act(*this);
+            actionsLog.push_back(watchlist);
+        }
+        else{
+            cout<<"Illegal command"<<endl;
         }
     }
     cout <<"you enterd" << command; //stam hadpsa!@#!@#

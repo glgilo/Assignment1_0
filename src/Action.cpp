@@ -97,7 +97,15 @@ string PrintContentList::toString() const {
     return substring("PrintContentList");
 }
 
-std::string PrintWatchHistory::toString() const {
+void PrintWatchHistory::act(Session &sess) {
+    vector<Watchable*> history = sess.getActiveUser().get_history();
+    cout << "Watch history for " + sess.getActiveUser().getName() << endl;
+    for (int i = 0; i < history.size(); i++){
+        cout << to_string(history[i]->getid()) + ". " + history[i]->getname() <<endl;
+    }
+}
+
+string PrintWatchHistory::toString() const {
 
 }
 

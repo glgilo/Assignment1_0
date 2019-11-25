@@ -10,11 +10,11 @@ Movie::Movie(long _id, const std::string &_name, int _length, const std::vector<
 std::string Movie::toString() const {
     std::string outputtags = "" ;
     for(std::string tag1 : gettags()){
-        outputtags = outputtags + tag1;
+        outputtags = outputtags + tag1 + ", ";
     }
-
-    return  std::to_string(getid()) + ". " + name  + " " + std::to_string(getlength()) + " " + "[" + outputtags + "]";
-
+    if (outputtags.at(outputtags.size()-2) == ',')
+        return  std::to_string(getid()) + ". " + name  + " " + std::to_string(getlength()) + " " + "[" + outputtags.substr(0,outputtags.size()-2) + "]";
+    return std::to_string(getid()) + ". " + name  + " " + std::to_string(getlength()) + " " + "[" + outputtags + "]";
 }
 Watchable* Movie::getNextWatchable(Session &) const {
     return nullptr; //change later
@@ -35,9 +35,11 @@ std::string Episode::toString() const {
 //        if(tag1 == gettags().at(gettags().size()-1)){
 //            outputtags = outputtags + tag1;
 //        }
-        outputtags = outputtags + tag1 +",";
+        outputtags = outputtags + tag1 +", ";
     }
-    return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags.substr(0,outputtags.size()-1) + "]";
+    if (outputtags.at(outputtags.size()-2) == ',')
+        return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags.substr(0,outputtags.size()-2) + "]";
+    return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags + "]";
 }
 Watchable* Episode::getNextWatchable(Session &) const {
     return nullptr; //change later
