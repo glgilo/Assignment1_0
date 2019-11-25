@@ -48,13 +48,13 @@ void CreateUser::act(Session &sess) {
     //cout << sess.getuserMap().size()<< endl;
 }
 std::string CreateUser::toString() const {
-    return substring("CreateUser");
+    return "CreateUser";
 }
 
 void ChangeActiveUser::act(Session &sess) {
     string userc = sess.getfirst();
     if (sess.getuserMap().count(userc) == 0) {
-        error("there is no such user");
+        error("There is no such user");
     } else {
         User *userTemp = sess.getuserMap()[userc];
         sess.changeactiveuser(userTemp);
@@ -62,7 +62,7 @@ void ChangeActiveUser::act(Session &sess) {
     }
 }
 string ChangeActiveUser::toString() const {
-    return "basn";
+    return "ChangeActiveUser";
 }
 
 void DeleteUser::act(Session &sess){
@@ -94,7 +94,7 @@ std::string PrintWatchHistory::toString() const {
 void Watch::act(Session &sess) {
     long id = std::stol(sess.getfirst());
     if(id>0 && id<=sess.getcontent().size()){
-        cout <<sess.getcontent().at(id-1)->getname()<<endl;
+        cout <<"watching " + sess.getcontent().at(id-1)->getname()<<endl;
         Watchable* watch = sess.getcontent().at(id-1);
       sess.getActiveUser().addtohistory(watch);
         complete();
@@ -106,27 +106,29 @@ void Watch::act(Session &sess) {
 }
 
 std::string Watch::toString() const {
-    return substring("Watch"); //change later
+    return "Watch";
 }
 
 void PrintActionsLog::act(Session &sess) {
     cout<<sess.getactionsLog().size()<<endl;
-    for(BaseAction* baseaction: sess.getactionsLog()){
-        cout<<baseaction->toString()<<endl;
+    //for(BaseAction* baseaction: sess.getactionsLog()){
+    for (int i = sess.getactionsLog().size()-1; i > 0; i--){
+        //cout<<substring(baseaction->toString())<<endl;
+        cout<<substring(sess.getactionsLog().at(i)->toString())<<endl;
     }
     complete();
 }
 
 std::string PrintActionsLog::toString() const {
-    return "blabla"; //change later
+    return "PrintActionsLog";
 }
 
 std::string BaseAction::substring(std::string action) const{
     if(status == ERROR){
-        return action + " " + "ERROR: " + errorMsg;
+        return action + " ERROR: " + errorMsg;
     }
     else{
-        return action + " " + "COMPLETED";
+        return action + " COMPLETED";
     }
 
 

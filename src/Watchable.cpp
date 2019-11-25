@@ -37,7 +37,7 @@ std::string Episode::toString() const {
 //        }
         outputtags = outputtags + tag1 +",";
     }
-    return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags + "]";
+    return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags.substr(0,outputtags.size()-1) + "]";
 }
 Watchable* Episode::getNextWatchable(Session &) const {
     return nullptr; //change later

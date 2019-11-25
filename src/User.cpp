@@ -26,6 +26,9 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
     return nullptr; //change later
 }
 
+//void
+
+
 RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name) {}
 Watchable* RerunRecommenderUser::getRecommendation(Session &_s) {
     return nullptr;//change later
