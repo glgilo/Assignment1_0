@@ -76,7 +76,7 @@ void DeleteUser::act(Session &sess){
 }
 
 string DeleteUser::toString() const {
-    return "DeleteUser";
+    return substring("DeleteUser");
 }
 
 void DuplicateUser::act(Session &sess){
@@ -85,6 +85,16 @@ void DuplicateUser::act(Session &sess){
 
 string DuplicateUser::toString() const {
     return "DuplicateUser";
+}
+
+void PrintContentList::act(Session &sess) {
+    for (Watchable* content: sess.getcontent())
+        cout<<content->toString()<<endl;
+    complete();
+}
+
+string PrintContentList::toString() const {
+    return substring("PrintContentList");
 }
 
 std::string PrintWatchHistory::toString() const {

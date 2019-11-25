@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include "../include/Session.h"
 #include "../include/Watchable.h"
 #include "../include/json.hpp"
@@ -95,53 +94,41 @@ void Session::start() {
 
     while(command != "exit"){
         printf("What would you like to do?" "\n");
-        std::string input;
-        getline(std::cin,input);
-        std::istringstream iss(input);
-        std::getline(iss, command, ' ');
-        std::getline(iss, first, ' ');
-        std::getline(iss, second, ' ');
-        //cin >> command;
+
+        cin >> command;
         if(command == "createuser"){
-            //cin >> first;
-            //cin >> second;
+            cin >> first;
+            cin >> second;
             BaseAction *newuser = new CreateUser();
             newuser->act(*this);
             actionsLog.push_back(newuser);
         }
-        else if(command == "changeuser"){
-            //cin >> first;
+        if(command == "changeuser"){
+            cin >> first;
             BaseAction *changeuser = new ChangeActiveUser();
             changeuser->act(*this);
             actionsLog.push_back(changeuser);
         }
 
-        else if(command == "watch"){
-            //cin >> first;
+        if(command == "watch"){
+            cin >> first;
             BaseAction *watch = new Watch();
             watch->act(*this);
             actionsLog.push_back(watch);
         }
-        else if(command == "log"){
+        if(command == "log"){
             BaseAction *log = new PrintActionsLog();
             log->act(*this);
             actionsLog.push_back(log);
         }
-        else if(command == "deleteuser"){
-            //cin >> first;
+        if(command == "deleteuser"){
+            cin >> first;
             BaseAction *deleteuser = new DeleteUser();
             deleteuser->act(*this);
             actionsLog.push_back(deleteuser);
         }
-        else {
-            cout<<"Illegal command"<<endl;
-        }
-        command = "";
-        first = "";
-        second = "";
-
     }
-    cout <<"you entered" << command; //stam hadpsa!@#!@#
+    cout <<"you enterd" << command; //stam hadpsa!@#!@#
 
 }
 
