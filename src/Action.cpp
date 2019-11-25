@@ -49,10 +49,8 @@ void CreateUser::act(Session &sess) {
         User *newuse = new GenreRecommenderUser(sess.getfirst());
         sess.addusermap(sess.getfirst(),newuse);
     }
-    if(getStatus() == COMPLETED){
-        cout << "gffg" << endl;}
-    //cout << sess.getuserMap().size()<< endl;
 }
+
 std::string CreateUser::toString() const {
     return "CreateUser";
 }
@@ -117,13 +115,14 @@ string PrintWatchHistory::toString() const {
 
 void Watch::act(Session &sess) {
     long id = std::stol(sess.getfirst());
-    if(id>0 && id<=sess.getcontent().size()){
-        cout <<"watching " + sess.getcontent().at(id-1)->getname()<<endl;
-        Watchable* watch = sess.getcontent().at(id-1);
-      sess.getActiveUser().addtohistory(watch);
+    if(id > 0 && id <= sess.getcontent().size()){
+        cout << "watching " + sess.getcontent().at(id-1)->getname() <<endl;
+//        Watchable* watch = sess.getcontent().at(id-1);
+        sess.getActiveUser().addtohistory(sess.getcontent().at(id-1));
         complete();
+        cout << "We recommend watching " + sess.getcontent().at(id-1)->getNextWatchable(sess)->getname() <<endl;
     }
-    else{
+    else {
         error("no such content");
     }
 

@@ -1,6 +1,7 @@
 #include "../include/Watchable.h"
 #include <string>
-
+#include "../include/Session.h"
+#include "../include/User.h"
 //Watchable::Watchable(): id(-1), length(-1),tags() {}
 Watchable::Watchable(long _id, int __length, const std::vector<std::string> &_tags): id(_id), length(__length), tags(_tags) {}
 
@@ -16,12 +17,16 @@ std::string Movie::toString() const {
         return  std::to_string(getid()) + ". " + name  + " " + std::to_string(getlength()) + " " + "[" + outputtags.substr(0,outputtags.size()-2) + "]";
     return std::to_string(getid()) + ". " + name  + " " + std::to_string(getlength()) + " " + "[" + outputtags + "]";
 }
-Watchable* Movie::getNextWatchable(Session &) const {
-    return nullptr; //change later
+Watchable* Movie::getNextWatchable(Session &sess) const {
+    return sess.getActiveUser().getRecommendation(sess);
 }
 
 std::string Movie::getname() const {
     return name;
+}
+
+void Episode::setNextEpisodeId(long &id) {
+    nextEpisodeId = id+1;
 }
 
 std::string Episode::getname() const {

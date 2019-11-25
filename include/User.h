@@ -30,6 +30,8 @@ public:
     virtual Watchable* getRecommendation(Session& s);
 //    virtual void deplicateUser(User*);
 private:
+    int count;
+    int avg;
 };
 
 class RerunRecommenderUser : public User {

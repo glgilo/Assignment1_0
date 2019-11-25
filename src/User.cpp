@@ -10,20 +10,31 @@ std::vector<Watchable*> User::get_history() const{
     return history;
 }
 LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name) {}
+
 Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
     User& user = s.getActiveUser();
     std::vector<Watchable*> history = user.get_history();
-    int count = 0;
-    int sum = 0;
-    int avg = 0;
-    for  (Watchable* watch : history){
-        sum = sum + watch->getlength();
-        count++;
-    }
-    avg = sum/count;
-    std::vector<Watchable*> notseen;
-
-    return nullptr; //change later
+    avg = ((avg*count)+history.at(history.size()-1)->getlength())/(count+1);
+    count++;
+    bool seen = false;
+    std::string defaultName = "";
+    std::vector<std::string> defaultTag;
+    Watchable* temp = new Movie(-1, defaultName ,INTMAX_MAX, defaultTag);
+    Watchable* nextRec = temp;
+    for(int i = 1; i < s.getcontent().size(); i++){
+       if (abs(nextRec->getlength()-avg) >= abs(s.getcontent().at(i)->getlength()-avg) ){
+           for(int j = 0; j < history.size() && !seen; j++) {
+               if(s.getcontent().at(i) == history.at(j))
+                   seen = true;
+           }
+           if (!seen)
+                nextRec = s.getcontent().at(i);
+       }
+       seen = false;
+   }
+    delete(temp);
+    return nextRec;
+    //eturn s.getcontent().at(10);
 }
 
 //void

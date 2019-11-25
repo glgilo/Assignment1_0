@@ -19,30 +19,31 @@ Session::Session(const std::string &_configFilePath) {
     i>>j;
     long id = 1;
    json movies = j["movies"];
-   json tvseries = j["tv_series"];
+   json tvSeries = j["tv_series"];
 
     for (json& movie : movies) {
         Watchable* movie1 = new Movie(id, movie["name"], movie["length"] , movie["tags"]);
         content.push_back(movie1);
         id++;
     }
-    for(json& series : tvseries){
+    for(json& series : tvSeries){
         json season = series["seasons"];
-        for(int i = 0; i<season.size(); i++){
+        for(int i = 0; i < season.size(); i++){
             for(int j = 1; j<= season[i]; j++){
-                Watchable* episode = new Episode(id, series["name"], series["episode_length"], i+1, j,series["tags"]);
+                Episode* episode = new Episode(id, series["name"], series["episode_length"], i+1, j,series["tags"]);
+                if(j!=season[i] && i!= season.size()-1) {
+                    episode->setNextEpisodeId(id);
+                }
                 content.push_back(episode);
                 id++;
             }
         }
-
     }
-    User *newuser = new LengthRecommenderUser("deafult");
-    addusermap("deafult",newuser);
-    activeUser = newuser;
+
+    User *newUser = new LengthRecommenderUser("deafult");
+    addusermap("deafult",newUser);
+    activeUser = newUser;
 }
-
-
 
 User& Session::getActiveUser() const {
     return *activeUser;
@@ -132,7 +133,7 @@ void Session::start() {
             content->act(*this);
             actionsLog.push_back(content);
         }
-        else if (command == "watchlist"){
+        else if (command == "watchhist"){
             BaseAction *watchlist = new PrintWatchHistory();
             watchlist->act(*this);
             actionsLog.push_back(watchlist);
