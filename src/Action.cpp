@@ -105,7 +105,7 @@ void PrintWatchHistory::act(Session &sess) {
     vector<Watchable*> history = sess.getActiveUser().get_history();
     cout << "Watch history for " + sess.getActiveUser().getName() << endl;
     for (int i = 0; i < history.size(); i++){
-        cout << to_string(i+1) + ". " + history[i]->getname() <<endl;
+        cout << to_string(i + 1) + ". " + history[i]->getname() <<endl;
     }
 }
 
