@@ -21,7 +21,7 @@ public:
 protected:
     void complete();
     void error(const std::string& errorMsg);
-//    std::string getErrorMsg() const;
+//    std::string getErrorMsg() const;////////////////////////////@#$#$^@#$$#$///////////////////
     std::string substring(std::string action, ActionStatus, std::string) const;
 private:
     std::string errorMsg;

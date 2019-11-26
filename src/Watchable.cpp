@@ -33,6 +33,10 @@ std::string Episode::getname() const {
     return seriesName + " "  + "S" + std::to_string(season) + "E" +std::to_string(episode) ;
 }
 
+long Episode::getNextId(Watchable *) const {
+    return nextEpisodeId;
+}
+
 Episode::Episode(long _id, const std::string &_seriesName, int _length, int _season, int _episode, const std::vector<std::string> &_tags):  Watchable(_id, _length, _tags), season(_season), episode(_episode), seriesName(_seriesName) {}
 std::string Episode::toString() const {
     std::string outputtags = "";
@@ -46,8 +50,16 @@ std::string Episode::toString() const {
         return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags.substr(0,outputtags.size()-2) + "]";
     return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags + "]";
 }
-Watchable* Episode::getNextWatchable(Session &) const {
-    return nullptr; //change later
+Watchable* Episode::getNextWatchable(Session &sess) const {
+//    std::vector<Watchable*> history = sess.getActiveUser().get_history();
+//    Episode* lastEpisode = dynamic_cast<Episode *>(history.at(history.size() - 1));
+//    if(lastEpisode->getNextId(lastEpisode) != -1 ){
+//
+//    }
+        if(nextEpisodeId != -1){
+            return sess.getcontent().at(nextEpisodeId);
+        }
+    return sess.getActiveUser().getRecommendation(sess);
 }
 
 

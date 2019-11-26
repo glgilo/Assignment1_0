@@ -18,6 +18,7 @@ Session::Session(const std::string &_configFilePath) {
     json j;
     i>>j;
     long id = 1;
+    long defId = -1;
    json movies = j["movies"];
    json tvSeries = j["tv_series"];
 
@@ -33,6 +34,9 @@ Session::Session(const std::string &_configFilePath) {
                 Episode* episode = new Episode(id, series["name"], series["episode_length"], i+1, j,series["tags"]);
                 if(j!=season[i] && i!= season.size()-1) {
                     episode->setNextEpisodeId(id);
+                }
+                else{
+                    episode->setNextEpisodeId(defId);
                 }
                 content.push_back(episode);
                 id++;

@@ -40,6 +40,7 @@ public:
     virtual std::string toString() const;
     virtual Watchable* getNextWatchable(Session&) const;
     virtual std::string getname() const;
+    long getNextId(Watchable*) const;
     void setNextEpisodeId(long&);
 private:
     std::string seriesName;
