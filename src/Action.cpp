@@ -52,7 +52,7 @@ void CreateUser::act(Session &sess) {
 }
 
 std::string CreateUser::toString() const {
-    return "CreateUser";
+    return substring("CreateUser");
 }
 
 void ChangeActiveUser::act(Session &sess) {
@@ -66,7 +66,7 @@ void ChangeActiveUser::act(Session &sess) {
     }
 }
 string ChangeActiveUser::toString() const {
-    return "ChangeActiveUser";
+    return substring("ChangeActiveUser");
 }
 
 void DeleteUser::act(Session &sess){
@@ -80,7 +80,7 @@ void DeleteUser::act(Session &sess){
 }
 
 string DeleteUser::toString() const {
-    return "DeleteUser";
+    return substring("DeleteUser");
 }
 
 void DuplicateUser::act(Session &sess){
@@ -88,7 +88,7 @@ void DuplicateUser::act(Session &sess){
 }
 
 string DuplicateUser::toString() const {
-    return "DuplicateUser";
+    return substring("DuplicateUser");
 }
 
 void PrintContentList::act(Session &sess) {
@@ -98,7 +98,7 @@ void PrintContentList::act(Session &sess) {
 }
 
 string PrintContentList::toString() const {
-    return "PrintContentList";
+    return substring("PrintContentList");
 }
 
 void PrintWatchHistory::act(Session &sess) {
@@ -110,7 +110,7 @@ void PrintWatchHistory::act(Session &sess) {
 }
 
 string PrintWatchHistory::toString() const {
-
+    return substring("PrintWatchHistory");
 }
 
 void Watch::act(Session &sess) {
@@ -129,7 +129,7 @@ void Watch::act(Session &sess) {
 }
 
 std::string Watch::toString() const {
-    return "Watch";
+    return substring("Watch");
 }
 
 void PrintActionsLog::act(Session &sess) {
@@ -137,18 +137,18 @@ void PrintActionsLog::act(Session &sess) {
     //for(BaseAction* baseaction: sess.getactionsLog()){
     for (int i = sess.getactionsLog().size()-1; i >= 0; i--){
         //cout<<substring(baseaction->toString())<<endl;
-        cout<<substring(sess.getactionsLog().at(i)->toString(), sess.getactionsLog().at(i)->getStatus(), sess.getactionsLog().at(i)->getErrorMsg()) <<endl;
+        cout<<sess.getactionsLog().at(i)->toString() <<endl;
     }
     complete();
 }
 
 std::string PrintActionsLog::toString() const {
-    return "PrintActionsLog";
+    return substring("PrintActionsLog");
 }
 
-std::string BaseAction::substring(std::string action, ActionStatus action1, std::string errormsg) const{
-    if(action1 == ERROR){
-        return action + " ERROR: " + errormsg;
+std::string BaseAction::substring(std::string action) const{
+    if(status == ERROR){
+        return action + " ERROR: " + errorMsg;
     }
     else{
         return action + " COMPLETED";

@@ -17,12 +17,11 @@ public:
     ActionStatus getStatus() const;
     virtual void act(Session& sess)=0;
     virtual std::string toString() const=0;
-    std::string getErrorMsg() const;
 protected:
     void complete();
     void error(const std::string& errorMsg);
-//    std::string getErrorMsg() const;////////////////////////////@#$#$^@#$$#$///////////////////
-    std::string substring(std::string action, ActionStatus, std::string) const;
+    std::string getErrorMsg() const;
+    std::string substring(std::string) const;
 private:
     std::string errorMsg;
     ActionStatus status;
