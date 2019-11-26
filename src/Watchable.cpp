@@ -57,7 +57,7 @@ Watchable* Episode::getNextWatchable(Session &sess) const {
 //
 //    }
         if(nextEpisodeId != -1){
-            return sess.getcontent().at(nextEpisodeId);
+            return sess.getcontent().at(nextEpisodeId-1);
         }
     return sess.getActiveUser().getRecommendation(sess);
 }
