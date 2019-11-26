@@ -40,6 +40,7 @@ public:
     virtual Watchable* getRecommendation(Session& s);
 //    virtual void deplicateUser(User*);
 private:
+    int lastRecId;
 };
 
 class GenreRecommenderUser : public User {

@@ -9,11 +9,12 @@ std::string User::getName() const {
 std::vector<Watchable*> User::get_history() const{
     return history;
 }
-LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name) {}
+LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name) {
+    count = 0;
+    avg = 0;
+}
 
 Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
-    User& user = s.getActiveUser();
-    std::vector<Watchable*> history = user.get_history();
     avg = ((avg*count)+history.at(history.size()-1)->getlength())/(count+1);
     count++;
     bool seen = false;
@@ -34,15 +35,19 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
    }
     delete(temp);
     return nextRec;
-    //eturn s.getcontent().at(10);
 }
 
 //void
 
 
-RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name) {}
-Watchable* RerunRecommenderUser::getRecommendation(Session &_s) {
-    return nullptr;//change later
+RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name) {
+    lastRecId = 0;
+}
+Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
+    lastRecId = (lastRecId + 1)%history.size();
+    Watchable* nextRec = history.at(lastRecId);
+    std::cout<<history.size()<<std::endl;
+    return nextRec;
 }
 
 GenreRecommenderUser::GenreRecommenderUser(const std::string &_name): User(_name) {}
