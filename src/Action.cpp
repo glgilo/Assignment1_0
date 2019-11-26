@@ -120,7 +120,7 @@ void Watch::act(Session &sess) {
 //        Watchable* watch = sess.getcontent().at(id-1);
         sess.getActiveUser().addtohistory(sess.getcontent().at(id-1));
         complete();
-        cout << "We recommend watching " + sess.getcontent().at(id-1)->getNextWatchable(sess)->getname() <<endl;
+        cout << "We recommend watching " + sess.getcontent().at(id-1)->getNextWatchable(sess)->getname() ;
     }
     else {
         error("no such content");

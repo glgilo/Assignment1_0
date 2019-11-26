@@ -120,6 +120,16 @@ void Session::start() {
             BaseAction *watch = new Watch();
             watch->act(*this);
             actionsLog.push_back(watch);
+            cout<< " continue watching? [y/n]" <<endl;
+            cin >> second;
+            while(second == "y"){
+                first = std::to_string(content.at(std::stoi(first)-1)->getNextWatchable(*this)->getid());
+                BaseAction *newWatch = new Watch();
+                newWatch->act(*this);
+                actionsLog.push_back(watch);
+                cout<< " continue watching? [y/n]" <<endl;
+                cin >> second;
+            }
         }
         else if(command == "log"){
             BaseAction *log = new PrintActionsLog();
