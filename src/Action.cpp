@@ -75,6 +75,10 @@ void DeleteUser::act(Session &sess){
         error("There is no such user");
     } else {
         sess.getuserMap()[userToDel]->get_history().clear();
+//        for(int i=0; i < sess.getuserMap()[userToDel]->get_history().size(); i++)
+//        {
+//            sess.getuserMap()[userToDel]->get_history().clear();
+//        }
         sess.deleteUser(userToDel);
         complete();
     }

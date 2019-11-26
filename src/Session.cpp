@@ -122,6 +122,9 @@ void Session::start() {
             actionsLog.push_back(watch);
             cout<< " continue watching? [y/n]" <<endl;
             cin >> second;
+            if(second != "y" && second !="n"){
+                cout << "Invalid Command" << endl;
+            }
             while(second == "y"){
                 first = std::to_string(content.at(std::stoi(first)-1)->getNextWatchable(*this)->getid());
                 BaseAction *newWatch = new Watch();
@@ -129,6 +132,9 @@ void Session::start() {
                 actionsLog.push_back(watch);
                 cout<< " continue watching? [y/n]" <<endl;
                 cin >> second;
+                if(second != "y" && second !="n"){
+                    cout << "Invalid Command" << endl;
+                }
             }
         }
         else if(command == "log"){
