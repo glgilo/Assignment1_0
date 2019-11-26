@@ -152,6 +152,13 @@ void Session::start() {
             watchlist->act(*this);
             actionsLog.push_back(watchlist);
         }
+        else if(command=="dupuser"){
+            cin >> first;
+            cin >> second;
+            BaseAction *duplicateUser = new DuplicateUser();
+            duplicateUser->act(*this);
+            actionsLog.push_back(duplicateUser);
+        }
         else{
             cout<<"Illegal command"<<endl;
         }

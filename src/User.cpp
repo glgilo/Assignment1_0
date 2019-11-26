@@ -1,6 +1,8 @@
 #include "../include/User.h"
 #include "../include/Session.h"
 #include "../include/Watchable.h"
+#include <iostream>
+#include <algorithm>
 
 User::User(const std::string &_name): name(_name) {}
 std::string User::getName() const {
@@ -9,9 +11,23 @@ std::string User::getName() const {
 std::vector<Watchable*> User::get_history() const{
     return history;
 }
+
+std::string LengthRecommenderUser::getAlgoName() {
+    return algoName;
+}
+
+std::string RerunRecommenderUser::getAlgoName() {
+    return algoName;
+}
+
+std::string GenreRecommenderUser::getAlgoName() {
+    return algoName;
+}
+
 LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name) {
     count = 0;
     avg = 0;
+    algoName = "len";
 }
 
 Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
@@ -42,16 +58,20 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
 
 RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name) {
     lastRecId = 0;
+    algoName = "rer";
 }
 Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
-    lastRecId = (lastRecId + 1)%history.size();
+    lastRecId = (lastRecId + 1) % history.size();
     Watchable* nextRec = history.at(lastRecId);
-    std::cout<<history.size()<<std::endl;
+    //std::cout<<history.size()<<std::endl;
     return nextRec;
 }
 
-GenreRecommenderUser::GenreRecommenderUser(const std::string &_name): User(_name) {}
+GenreRecommenderUser::GenreRecommenderUser(const std::string &_name): User(_name) {
+    algoName = "gen";
+}
 Watchable* GenreRecommenderUser::getRecommendation(Session &_s) {
+
     return nullptr;//change later
 }
 

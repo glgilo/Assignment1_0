@@ -74,6 +74,7 @@ void DeleteUser::act(Session &sess){
     if (sess.getuserMap().count(userToDel) == 0){
         error("There is no such user");
     } else {
+        sess.getuserMap()[userToDel]->get_history().clear();
         sess.deleteUser(userToDel);
         complete();
     }
@@ -84,7 +85,31 @@ string DeleteUser::toString() const {
 }
 
 void DuplicateUser::act(Session &sess){
-
+    string userNameToDup = sess.getfirst();
+    string newUserName = sess.getsecond();
+    User *userToDup = sess.getuserMap()[userNameToDup];
+    if (sess.getuserMap().count(userNameToDup) == 0) {
+        error("There is no such user");
+    }
+    else {
+        //User* newUse = sess.getuserMap()[userToDup];
+        if (userToDup->getAlgoName() == "len") {
+            User *newUser = new LengthRecommenderUser(newUserName);
+            for (Watchable *content: userToDup->get_history())
+                newUser->addtohistory(content);
+            sess.addusermap(newUserName, newUser);
+        } else if (userToDup->getAlgoName() == "rer") {
+            User *newUser = new RerunRecommenderUser(newUserName);
+            for (Watchable *content: userToDup->get_history())
+                newUser->addtohistory(content);
+            sess.addusermap(newUserName, newUser);
+        } else if (userToDup->getAlgoName() == "gen") {
+            User *newUser = new GenreRecommenderUser(newUserName);
+            for (Watchable *content: userToDup->get_history())
+                newUser->addtohistory(content);
+            sess.addusermap(newUserName, newUser);
+        }
+    }
 }
 
 string DuplicateUser::toString() const {
@@ -105,7 +130,7 @@ void PrintWatchHistory::act(Session &sess) {
     vector<Watchable*> history = sess.getActiveUser().get_history();
     cout << "Watch history for " + sess.getActiveUser().getName() << endl;
     for (int i = 0; i < history.size(); i++){
-        cout << to_string(i + 1) + ". " + history[i]->getname() <<endl;
+        cout << to_string(i + 1) + ". " + history.at(i)->getname() <<endl;
     }
 }
 
