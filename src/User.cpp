@@ -3,6 +3,7 @@
 #include "../include/Watchable.h"
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 
 User::User(const std::string &_name): name(_name) {}
 std::string User::getName() const {
@@ -70,10 +71,73 @@ Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
 GenreRecommenderUser::GenreRecommenderUser(const std::string &_name): User(_name) {
     algoName = "gen";
 }
-Watchable* GenreRecommenderUser::getRecommendation(Session &_s) {
 
-    return nullptr;//change later
+std::string findMaxName(std::unordered_map<std::string,int> &tagMax) {
+    std::string maxTagName = "";
+    int maxTagCount = 0;
+    for (auto &tag: tagMax) {
+        if (tag.second > maxTagCount) {
+            maxTagName = tag.first;
+            maxTagCount = tag.second;
+        }
+        return maxTagName;
+    }
+
 }
+
+
+
+Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
+    std::unordered_map<std::string,int> tagCount;
+    for(Watchable* content: history){
+        for(std::string& tag : content->gettags()){
+            if(tagCount.count(tag) == 0){
+                tagCount.insert({tag,1});
+            } else{
+                tagCount[tag]++;
+            }
+        }
+    }
+    std::string maxTagName = "";
+    int maxTagCount = 0;
+    for (auto& tag: tagCount){
+        if (tag.second > maxTagCount){
+            maxTagName = tag.first;
+            maxTagCount = tag.second;
+        }
+
+    }
+    Watchable* nextRec;
+    bool Watched = false;
+//    bool fit = true;
+    while (tagCount.size() != 0) {
+        maxTagName = findMaxName(tagCount);
+        for (int i = 0; i < s.getcontent().size(); i++) {
+            for (int j = 0; j < s.getcontent().at(i)->gettags().size() && !Watched; j++) {
+                if (maxTagName == s.getcontent().at(i)->gettags().at(j)) {
+                    nextRec = s.getcontent().at(i);
+                    for (int k = 0; k < history.size() && !Watched; k++) {
+                        if (s.getcontent().at(i) == history.at(k)) {
+                            Watched = true;
+                            nextRec = nullptr;
+                        }
+                    }
+                    if (!Watched) {
+                        return nextRec;
+                    }
+                }
+            }
+            if (i != s.getcontent().size() && Watched) {
+                Watched = false;
+            }
+        }
+        tagCount.erase(maxTagName);
+    }
+
+    return nullptr;
+}
+
+
 
 void User::addtohistory(Watchable* watch) {
     history.push_back(watch);

@@ -73,7 +73,9 @@ void DeleteUser::act(Session &sess){
     string userToDel = sess.getfirst();
     if (sess.getuserMap().count(userToDel) == 0){
         error("There is no such user");
-    } else {
+    }
+    else {
+        cout << sess.getuserMap()[userToDel]->getName()<<endl;
         sess.getuserMap()[userToDel]->get_history().clear();
 //        for(int i=0; i < sess.getuserMap()[userToDel]->get_history().size(); i++)
 //        {
