@@ -76,11 +76,12 @@ void DeleteUser::act(Session &sess){
     }
     else {
         cout << sess.getuserMap()[userToDel]->getName()<<endl;
-        sess.getuserMap()[userToDel]->get_history().clear();
+
 //        for(int i=0; i < sess.getuserMap()[userToDel]->get_history().size(); i++)
 //        {
 //            sess.getuserMap()[userToDel]->get_history().clear();
 //        }
+        delete sess.getuserMap().at(userToDel);
         sess.deleteUser(userToDel);
         complete();
     }

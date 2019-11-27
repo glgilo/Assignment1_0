@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_map>
+using namespace std;
 
 User::User(const std::string &_name): name(_name) {}
 std::string User::getName() const {
@@ -77,11 +78,16 @@ std::string findMaxName(std::unordered_map<std::string,int> &tagMax) {
     int maxTagCount = 0;
     for (auto &tag: tagMax) {
         if (tag.second > maxTagCount) {
-            maxTagName = tag.first;
-            maxTagCount = tag.second;
+                maxTagName = tag.first;
+                maxTagCount = tag.second;
         }
-        return maxTagName;
+        else if(tag.second == maxTagCount && maxTagName > tag.first ){
+                maxTagName = tag.first;
+                maxTagCount = tag.second;
+        }
     }
+    return maxTagName;
+}
 
 }
 
