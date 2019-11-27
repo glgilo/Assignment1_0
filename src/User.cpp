@@ -40,7 +40,7 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
     Watchable* temp = new Movie(-1, defaultName ,INTMAX_MAX, defaultTag);
     Watchable* nextRec = temp;
     for(int i = 1; i < s.getcontent().size(); i++){
-       if (abs(nextRec->getlength()-avg) >= abs(s.getcontent().at(i)->getlength()-avg) ){
+       if (abs(nextRec->getlength()-avg) > abs(s.getcontent().at(i)->getlength()-avg) ){
            for(int j = 0; j < history.size() && !seen; j++) {
                if(s.getcontent().at(i) == history.at(j))
                    seen = true;

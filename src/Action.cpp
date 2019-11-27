@@ -164,10 +164,7 @@ std::string Watch::toString() const {
 }
 
 void PrintActionsLog::act(Session &sess) {
-//    cout<<sess.getactionsLog().size()<<endl;
-    //for(BaseAction* baseaction: sess.getactionsLog()){
     for (int i = sess.getactionsLog().size()-1; i >= 0; i--){
-        //cout<<substring(baseaction->toString())<<endl;
         cout<<sess.getactionsLog().at(i)->toString() <<endl;
     }
     complete();
@@ -177,13 +174,16 @@ std::string PrintActionsLog::toString() const {
     return substring("PrintActionsLog");
 }
 
-std::string BaseAction::substring(std::string action) const{
-    if(status == ERROR){
+std::string BaseAction::substring(std::string action) const {
+    if (status == ERROR) {
         return action + " ERROR: " + errorMsg;
-    }
-    else{
+    } else {
         return action + " COMPLETED";
     }
+}
 
+void Exit::act(Session &sess) {}
 
+string Exit::toString() const {
+    return substring("Exit");
 }

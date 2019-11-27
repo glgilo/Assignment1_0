@@ -6,13 +6,20 @@
 #include "../include/json.hpp"
 #include "../include/User.h"
 #include "../include/Action.h"
-//std::ifstream config1_file("../config1.json", std::ifstream::binary);
-//config1_file >> content;
 
 using namespace std;
 class User;
 class Watchable;
 using json = nlohmann::json;
+
+Session::~Session() {
+    for (Watchable* cont: content)
+        delete(cont);
+    for (BaseAction* action: actionsLog)
+        delete(action);
+    for (std::pair<std::string,User*> user: userMap)
+        delete(user.second);
+}
 
 Session::Session(const std::string &_configFilePath) {
     std::ifstream i(_configFilePath);
@@ -45,7 +52,7 @@ Session::Session(const std::string &_configFilePath) {
         }
     }
 
-    User *newUser = new GenreRecommenderUser("deafult");
+    User *newUser = new LengthRecommenderUser("deafult");
     addusermap("deafult",newUser);
     activeUser = newUser;
 }
@@ -94,11 +101,11 @@ void Session::changeactiveuser(User* user)  {
     activeUser = user;
 }
 
-Session::~Session() {}
+//Session::~Session() {}
 void Session::start() {
     printf("SPLFLIX is now on!"  "\n" );
 
-    while(command != "exit"){
+    while(true){
         printf("What would you like to do?" "\n");
         std::string inputLine;
         getline(std::cin,inputLine);
@@ -173,6 +180,12 @@ void Session::start() {
             BaseAction *duplicateUser = new DuplicateUser();
             duplicateUser->act(*this);
             actionsLog.push_back(duplicateUser);
+        }
+        else if (command == "exit"){
+            BaseAction *exit = new Exit();
+            exit->act(*this);
+            actionsLog.push_back(exit);
+            break;
         }
         else{
             cout<<"Illegal command"<<endl;
