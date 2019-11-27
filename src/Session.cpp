@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "../include/Session.h"
 #include "../include/Watchable.h"
 #include "../include/json.hpp"
@@ -99,24 +100,29 @@ void Session::start() {
 
     while(command != "exit"){
         printf("What would you like to do?" "\n");
-
-        cin >> command;
+        std::string inputLine;
+        getline(std::cin,inputLine);
+        std::istringstream iss(inputLine);
+        std::getline(iss,command,' ');
+        std::getline(iss,first,' ');
+        std::getline(iss,second,' ');
+//        cin >> command;
         if(command == "createuser"){
-            cin >> first;
-            cin >> second;
+//            cin >> first;
+//            cin >> second;
             BaseAction *newuser = new CreateUser();
             newuser->act(*this);
             actionsLog.push_back(newuser);
         }
         else if(command == "changeuser"){
-            cin >> first;
+//            cin >> first;
             BaseAction *changeuser = new ChangeActiveUser();
             changeuser->act(*this);
             actionsLog.push_back(changeuser);
         }
 
         else if(command == "watch"){
-            cin >> first;
+//            cin >> first;
             BaseAction *watch = new Watch();
             watch->act(*this);
             actionsLog.push_back(watch);
@@ -125,17 +131,20 @@ void Session::start() {
             if(second != "y" && second !="n"){
                 cout << "Invalid Command" << endl;
             }
-            while(second == "y"){
-                first = std::to_string(content.at(std::stoi(first)-1)->getNextWatchable(*this)->getid());
+            while(second == "y") {
+                std::getline(iss, second, ' ');
+                first = std::to_string(content.at(std::stoi(first) - 1)->getNextWatchable(*this)->getid());
                 BaseAction *newWatch = new Watch();
                 newWatch->act(*this);
                 actionsLog.push_back(watch);
-                cout<< " continue watching? [y/n]" <<endl;
+                cout<< ", continue watching? [y/n]" <<endl;
                 cin >> second;
                 if(second != "y" && second !="n"){
                     cout << "Invalid Command" << endl;
                 }
             }
+            getline(std::cin,inputLine);
+            std::istringstream iss(inputLine);
         }
         else if(command == "log"){
             BaseAction *log = new PrintActionsLog();
@@ -143,7 +152,7 @@ void Session::start() {
             actionsLog.push_back(log);
         }
         else if(command == "deleteuser"){
-            cin >> first;
+//            cin >> first;
             BaseAction *deleteuser = new DeleteUser();
             deleteuser->act(*this);
             actionsLog.push_back(deleteuser);
@@ -159,8 +168,8 @@ void Session::start() {
             actionsLog.push_back(watchlist);
         }
         else if(command=="dupuser"){
-            cin >> first;
-            cin >> second;
+//            cin >> first;
+//            cin >> second;
             BaseAction *duplicateUser = new DuplicateUser();
             duplicateUser->act(*this);
             actionsLog.push_back(duplicateUser);
@@ -169,7 +178,6 @@ void Session::start() {
             cout<<"Illegal command"<<endl;
         }
     }
-    cout <<"you enterd" << command; //stam hadpsa!@#!@#
-
+//    cout <<"you enterd" << command; //stam hadpsa!@#!@#
 }
 
