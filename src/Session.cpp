@@ -15,10 +15,27 @@ using json = nlohmann::json;
 Session::~Session() {
     for (Watchable* cont: content)
         delete(cont);
+    content.clear();
     for (BaseAction* action: actionsLog)
         delete(action);
+    actionsLog.clear();
     for (std::pair<std::string,User*> user: userMap)
         delete(user.second);
+    userMap.clear();
+}
+
+Session::Session(const Session& other)  // Copy Constructor
+     {
+    for (int i = 0; i < other.getcontent().size(); i++)
+        content.push_back(other.getcontent().at(i)->clone());
+    for (std::pair<std::string,User*> user: other.getuserMap()) {
+        User* temp = user.second->clone();
+        temp->fixHistory(*this);
+        userMap.insert({user.first, temp});
+    }
+    for (BaseAction* action: other.getactionsLog())
+        actionsLog.push_back(action);
+    activeUser = userMap[other.getActiveUser().getName()];
 }
 
 Session::Session(const std::string &_configFilePath) {
@@ -31,7 +48,7 @@ Session::Session(const std::string &_configFilePath) {
    json tvSeries = j["tv_series"];
 
     for (json& movie : movies) {
-        Watchable* movie1 = new Movie(id, movie["name"], movie["length"] , movie["tags"]);
+        auto* movie1 = new Movie(id, movie["name"], movie["length"] , movie["tags"]);
         content.push_back(movie1);
         id++;
     }
@@ -39,7 +56,7 @@ Session::Session(const std::string &_configFilePath) {
         json season = series["seasons"];
         for(int i = 0; i < season.size(); i++){
             for(int j = 1; j<= season[i]; j++){
-                Episode* episode = new Episode(id, series["name"], series["episode_length"], i+1, j,series["tags"]);
+                auto* episode = new Episode(id, series["name"], series["episode_length"], i+1, j,series["tags"]);
                 if(i== season.size()-1 && j==season[i]) {
                     episode->setNextEpisodeId(defId);
                 }
@@ -51,9 +68,8 @@ Session::Session(const std::string &_configFilePath) {
             }
         }
     }
-
-    User *newUser = new LengthRecommenderUser("deafult");
-    addusermap("deafult",newUser);
+    User *newUser = new LengthRecommenderUser("default");
+    addusermap("default",newUser);
     activeUser = newUser;
 }
 
@@ -61,9 +77,6 @@ User& Session::getActiveUser() const {
     return *activeUser;
 }
 
-std::string Session::getcommand() {
-    return command;
-}
 
 std::string Session::getfirst() {
     return first;
@@ -73,7 +86,7 @@ std::string Session::getsecond() {
     return second;
 }
 
-std::unordered_map <std::string,User*> Session::getuserMap() {
+const unordered_map <std::string,User*> Session::getuserMap() const {
     return userMap;
 }
 
@@ -89,11 +102,11 @@ void Session::addusermap(std::string _name, User *_newuse) {
     userMap[_name] = _newuse;
 }
 
-std::vector<Watchable*>& Session::getcontent() {
+const vector<Watchable*>& Session::getcontent() const {
     return content;
 }
 
-std::vector<BaseAction*>& Session::getactionsLog() {
+const vector<BaseAction*>& Session::getactionsLog() const {
     return actionsLog;
 }
 
@@ -143,7 +156,9 @@ void Session::start() {
                 first = std::to_string(content.at(std::stoi(first) - 1)->getNextWatchable(*this)->getid());
                 BaseAction *newWatch = new Watch();
                 newWatch->act(*this);
-                actionsLog.push_back(watch);
+                actionsLog.push_back(newWatch);
+                if (content.at(std::stoi(first) - 1)->getNextWatchable(*this) == nullptr)
+                    break;
                 cout<< ", continue watching? [y/n]" <<endl;
                 cin >> second;
                 if(second != "y" && second !="n"){

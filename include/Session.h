@@ -6,7 +6,7 @@
 #include <string>
 //#include <bits/valarray_before.h>
 #include "Action.h"
-
+using namespace std;
 class User;
 class Watchable;
 class Movie;
@@ -14,18 +14,17 @@ class Episode;
 class Session{
 public:
     Session(const std::string &configFilePath);
-    ~Session();
+    ~Session(); // Destructor
+    Session(const Session&); // Copy Constructor
     void start();
     User& getActiveUser() const;
-    std::string getcommand();
     std::string getfirst();
     std::string getsecond();
-    std::unordered_map<std::string,User*> getuserMap();
+    const unordered_map<std::string,User*> getuserMap() const;
     void deleteUser(std::string);
-//    void duplicateUser(std::string, User*);
     void addusermap(std::string,User*);
-    std::vector<Watchable*>& getcontent();
-    std::vector<BaseAction*>& getactionsLog();
+    const vector<Watchable*>& getcontent() const;
+    const vector<BaseAction*>& getactionsLog() const;
     void changeactiveuser(User*);
 private:
     std::vector<Watchable*> content;

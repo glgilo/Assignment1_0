@@ -6,6 +6,8 @@
 #include <unordered_map>
 using namespace std;
 
+User::~User() {};
+
 User::User(const std::string &_name): name(_name) {}
 std::string User::getName() const {
     return name;
@@ -26,15 +28,16 @@ std::string GenreRecommenderUser::getAlgoName() {
     return algoName;
 }
 
-LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name) {
-    count = 0;
-    avg = 0;
+LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name)   {
     algoName = "len";
 }
 
 Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
-    avg = ((avg*count)+history.at(history.size()-1)->getlength())/(count+1);
-    count++;
+    float avg = 0;
+    for(Watchable* hisCont: history){
+        avg = avg + hisCont->getlength();
+    }
+    avg = avg/history.size();
     bool seen = false;
     std::string defaultName = "";
     std::vector<std::string> defaultTag;
@@ -52,11 +55,10 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
        seen = false;
    }
     delete(temp);
+    if (nextRec->getname() == defaultName)
+        return nullptr;
     return nextRec;
 }
-
-//void
-
 
 RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name) {
     lastRecId = 0;
@@ -65,7 +67,6 @@ RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name
 Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
     lastRecId = (lastRecId + 1) % history.size();
     Watchable* nextRec = history.at(lastRecId);
-    //std::cout<<history.size()<<std::endl;
     return nextRec;
 }
 
@@ -89,10 +90,6 @@ std::string findMaxName(std::unordered_map<std::string,int> &tagMax) {
     return maxTagName;
 }
 
-
-
-
-
 Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
     std::unordered_map<std::string,int> tagCount;
     for(Watchable* content: history){
@@ -115,7 +112,6 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
     }
     Watchable* nextRec;
     bool Watched = false;
-//    bool fit = true;
     while (tagCount.size() != 0) {
         maxTagName = findMaxName(tagCount);
         for (int i = 0; i < s.getcontent().size(); i++) {
@@ -139,12 +135,46 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
         }
         tagCount.erase(maxTagName);
     }
-
     return nullptr;
 }
 
-
-
 void User::addtohistory(Watchable* watch) {
     history.push_back(watch);
+}
+
+
+User* LengthRecommenderUser::clone() {
+    auto* userClone = new LengthRecommenderUser(getName());
+    copyHistory(*userClone);
+    userClone->algoName = algoName;
+    return userClone;
+}
+
+User* RerunRecommenderUser::clone() {
+    auto* userClone = new RerunRecommenderUser(getName());
+    userClone->lastRecId = lastRecId;
+    userClone->algoName = algoName;
+    copyHistory(*userClone);
+    return userClone;
+}
+
+User* GenreRecommenderUser::clone() {
+    auto* userClone = new GenreRecommenderUser(getName());
+    userClone->algoName = algoName;
+    copyHistory(*userClone);
+    return userClone;
+}
+
+void User::fixHistory(Session &sess) {
+    int id = 0;
+    for(int i = 0; i < this->get_history().size(); i++){
+        id = this->get_history().at(i)->getid();
+        history.at(i) = sess.getcontent().at(id - 1);
+    }
+}
+
+void User::copyHistory(User& other) {
+    for (int i = 0; i < this->get_history().size(); i++){
+        other.addtohistory(this->get_history().at(i));
+    }
 }

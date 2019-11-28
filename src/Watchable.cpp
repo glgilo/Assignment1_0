@@ -25,6 +25,12 @@ std::string Movie::getname() const {
     return name;
 }
 
+Watchable* Movie::clone() const {
+    auto* newMovie = new Movie(getid(),name,getlength(),gettags());
+    return newMovie;
+}
+
+
 void Episode::setNextEpisodeId(long &id) {
     nextEpisodeId = id+1;
 }
@@ -51,11 +57,6 @@ std::string Episode::toString() const {
     return std::to_string(getid())+ ". " + seriesName + " " + "S" + std::to_string(season) + "E" + std::to_string(episode) + " " +std::to_string(getlength()) + " minutes" + " [" + outputtags + "]";
 }
 Watchable* Episode::getNextWatchable(Session &sess) const {
-//    std::vector<Watchable*> history = sess.getActiveUser().get_history();
-//    Episode* lastEpisode = dynamic_cast<Episode *>(history.at(history.size() - 1));
-//    if(lastEpisode->getNextId(lastEpisode) != -1 ){
-//
-//    }
         if(nextEpisodeId != -1){
             return sess.getcontent().at(nextEpisodeId-1);
         }
@@ -74,3 +75,7 @@ std::vector<std::string> Watchable::gettags() const{
     return tags;
 }
 
+Watchable* Episode::clone() const {
+    auto* episdeClone = new Episode(getid(),seriesName,getlength(),season,episode,gettags());
+    return episdeClone;
+}

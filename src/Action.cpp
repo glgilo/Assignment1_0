@@ -6,6 +6,8 @@
 
 using namespace std;
 
+BaseAction::~BaseAction() {}
+
 BaseAction::BaseAction() {
     status = PENDING;
 }
@@ -60,7 +62,7 @@ void ChangeActiveUser::act(Session &sess) {
     if (sess.getuserMap().count(userc) == 0) {
         error("There is no such user");
     } else {
-        User *userTemp = sess.getuserMap()[userc];
+        User *userTemp = sess.getuserMap().at(userc);
         sess.changeactiveuser(userTemp);
         complete();
     }
@@ -75,12 +77,7 @@ void DeleteUser::act(Session &sess){
         error("There is no such user");
     }
     else {
-        cout << sess.getuserMap()[userToDel]->getName()<<endl;
-
-//        for(int i=0; i < sess.getuserMap()[userToDel]->get_history().size(); i++)
-//        {
-//            sess.getuserMap()[userToDel]->get_history().clear();
-//        }
+        cout << sess.getuserMap().at(userToDel)->getName()<<endl;
         delete sess.getuserMap().at(userToDel);
         sess.deleteUser(userToDel);
         complete();
@@ -94,12 +91,11 @@ string DeleteUser::toString() const {
 void DuplicateUser::act(Session &sess){
     string userNameToDup = sess.getfirst();
     string newUserName = sess.getsecond();
-    User *userToDup = sess.getuserMap()[userNameToDup];
+    User *userToDup = sess.getuserMap().at(userNameToDup);
     if (sess.getuserMap().count(userNameToDup) == 0) {
         error("There is no such user");
     }
     else {
-        //User* newUse = sess.getuserMap()[userToDup];
         if (userToDup->getAlgoName() == "len") {
             User *newUser = new LengthRecommenderUser(newUserName);
             for (Watchable *content: userToDup->get_history())
@@ -135,9 +131,13 @@ string PrintContentList::toString() const {
 
 void PrintWatchHistory::act(Session &sess) {
     vector<Watchable*> history = sess.getActiveUser().get_history();
-    cout << "Watch history for " + sess.getActiveUser().getName() << endl;
-    for (int i = 0; i < history.size(); i++){
-        cout << to_string(i + 1) + ". " + history.at(i)->getname() <<endl;
+    if(history.empty())
+        cout << "There is no history for " + sess.getActiveUser().getName() << endl;
+    else {
+        cout << "Watch history for " + sess.getActiveUser().getName() << endl;
+        for (int i = 0; i < history.size(); i++) {
+            cout << to_string(i + 1) + ". " + history.at(i)->getname() << endl;
+        }
     }
 }
 
@@ -149,10 +149,13 @@ void Watch::act(Session &sess) {
     long id = std::stol(sess.getfirst());
     if(id > 0 && id <= sess.getcontent().size()){
         cout << "watching " + sess.getcontent().at(id-1)->getname() <<endl;
-//        Watchable* watch = sess.getcontent().at(id-1);
         sess.getActiveUser().addtohistory(sess.getcontent().at(id-1));
         complete();
-        cout << "We recommend watching " + sess.getcontent().at(id-1)->getNextWatchable(sess)->getname() ;
+        Watchable* recommendation = sess.getcontent().at(id-1)->getNextWatchable(sess);
+        if (recommendation != nullptr)
+            cout << "We recommend watching " + recommendation->getname() ;
+        else
+            cout << "There is no recommended content available" <<endl;
     }
     else {
         error("no such content");
@@ -178,13 +181,75 @@ std::string PrintActionsLog::toString() const {
 std::string BaseAction::substring(std::string action) const {
     if (status == ERROR) {
         return action + " ERROR: " + errorMsg;
-    } else {
+    } else if (status == COMPLETED){
         return action + " COMPLETED";
-    }
+    } else if (status == PENDING)
+        return action + " PENDING";
 }
 
 void Exit::act(Session &sess) {}
 
 string Exit::toString() const {
     return substring("Exit");
+}
+
+BaseAction* CreateUser::clone() const {
+    auto* actClone = new CreateUser ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* ChangeActiveUser::clone() const {
+    auto* actClone = new ChangeActiveUser ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* DeleteUser::clone() const {
+    auto* actClone = new DeleteUser ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* DuplicateUser::clone() const {
+    auto* actClone = new DuplicateUser ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* PrintContentList::clone() const {
+    auto* actClone = new PrintContentList ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* PrintWatchHistory::clone() const {
+    auto* actClone = new PrintWatchHistory ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* Watch::clone() const {
+    auto* actClone = new Watch ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* PrintActionsLog::clone() const {
+    auto* actClone = new PrintActionsLog ();
+    setAction(actClone);
+    return actClone;
+}
+
+BaseAction* Exit::clone() const {
+    auto* actClone = new Exit ();
+    setAction(actClone);
+    return actClone;
+}
+
+void BaseAction::setAction(BaseAction *actClone) const {
+    if (getStatus() == COMPLETED)
+        actClone->complete();
+    if (getStatus() == ERROR)
+        actClone->error(getErrorMsg());
 }
