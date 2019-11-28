@@ -77,5 +77,6 @@ std::vector<std::string> Watchable::gettags() const{
 
 Watchable* Episode::clone() const {
     auto* episdeClone = new Episode(getid(),seriesName,getlength(),season,episode,gettags());
+    episdeClone->nextEpisodeId = nextEpisodeId;
     return episdeClone;
 }

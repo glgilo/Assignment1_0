@@ -77,7 +77,6 @@ void DeleteUser::act(Session &sess){
         error("There is no such user");
     }
     else {
-        cout << sess.getuserMap().at(userToDel)->getName()<<endl;
         delete sess.getuserMap().at(userToDel);
         sess.deleteUser(userToDel);
         complete();

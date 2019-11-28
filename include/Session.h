@@ -16,7 +16,13 @@ public:
     Session(const std::string &configFilePath);
     ~Session(); // Destructor
     Session(const Session&); // Copy Constructor
+    Session(Session&&); //Move Constructor
+    Session &operator=(const Session&);// Copy assignment operator
+    Session &operator=(const Session&&); //Move assignment operator
     void start();
+    void clean();
+    void copy(const Session&);
+    void move(const Session &other);
     User& getActiveUser() const;
     std::string getfirst();
     std::string getsecond();

@@ -10,8 +10,12 @@ int main(int argc, char** argv){
     }
     Session* s = new Session(argv[1]);
     s->start();
+    Session s3 = *s;
     Session s2 = *s;
     delete (s);
     s2.start();
+//    s3=s2;
+//    s3.start();
+//    s2.start();
     return 0;
 }

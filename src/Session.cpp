@@ -12,29 +12,74 @@ class User;
 class Watchable;
 using json = nlohmann::json;
 
-Session::~Session() {
+Session::~Session() { // Destructor
+    clean();
+}
+
+void Session::clean(){
     for (Watchable* cont: content)
         delete(cont);
     content.clear();
     for (BaseAction* action: actionsLog)
         delete(action);
     actionsLog.clear();
-    for (std::pair<std::string,User*> user: userMap)
+    for (pair<string,User*> user: userMap)
         delete(user.second);
     userMap.clear();
 }
 
-Session::Session(const Session& other)  // Copy Constructor
-     {
+Session::Session(const Session& other) {  // Copy Constructor
+         copy(other);
+ }
+
+ Session& Session::operator=(const Session &other){ // Copy assignment operator
+    if(this == &other){
+        return *this;
+    }
+    clean();
+    copy(other);
+     return *this;
+}
+
+Session::Session(Session&& other) { //Move Constructor
+    move(other);
+}
+
+Session& Session::operator=(const Session &&other) { //Move assignment operator
+    if(this == &other){
+        return *this;
+    }
+    clean();
+    move(other);
+    return *this;
+}
+
+void Session::move(const Session &other) {
+    for (Watchable *cont: other.getcontent()) {
+        content.push_back(cont);
+        cont = nullptr;
+    }
+    for (BaseAction* action: other.getactionsLog()) {
+        actionsLog.push_back(action);
+        action = nullptr;
+    }
+    for (pair<string,User*> user: other.getuserMap()) {
+        userMap.insert(user);
+        user.second = nullptr;
+    }
+    activeUser = userMap[other.getActiveUser().getName()];
+}
+
+void Session::copy(const Session &other) {
     for (int i = 0; i < other.getcontent().size(); i++)
         content.push_back(other.getcontent().at(i)->clone());
-    for (std::pair<std::string,User*> user: other.getuserMap()) {
+    for (pair<string,User*> user: other.getuserMap()) {
         User* temp = user.second->clone();
         temp->fixHistory(*this);
         userMap.insert({user.first, temp});
     }
     for (BaseAction* action: other.getactionsLog())
-        actionsLog.push_back(action);
+        actionsLog.push_back(action->clone());
     activeUser = userMap[other.getActiveUser().getName()];
 }
 
