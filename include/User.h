@@ -44,7 +44,7 @@ public:
     std::string getAlgoName() ;
     virtual User* clone() ;
 private:
-    int lastRecId;
+    long lastRecId;
     std::string algoName;
 };
 

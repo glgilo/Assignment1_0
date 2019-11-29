@@ -8,7 +8,7 @@ using namespace std;
 
 BaseAction::~BaseAction() {}
 
-BaseAction::BaseAction() {
+BaseAction::BaseAction(): errorMsg(""), status() {
     status = PENDING;
 }
 void BaseAction::complete() {
@@ -76,6 +76,8 @@ void DeleteUser::act(Session &sess){
     if (sess.getuserMap().count(userToDel) == 0){
         error("There is no such user");
     }
+    else if(sess.getActiveUser().getName() == userToDel)
+        error("You can't delete the active user, please change user first");
     else {
         delete sess.getuserMap().at(userToDel);
         sess.deleteUser(userToDel);
@@ -134,7 +136,7 @@ void PrintWatchHistory::act(Session &sess) {
         cout << "There is no history for " + sess.getActiveUser().getName() << endl;
     else {
         cout << "Watch history for " + sess.getActiveUser().getName() << endl;
-        for (int i = 0; i < history.size(); i++) {
+        for (int i = 0;(unsigned) i < history.size(); i++) {
             cout << to_string(i + 1) + ". " + history.at(i)->getname() << endl;
         }
     }
@@ -146,7 +148,7 @@ string PrintWatchHistory::toString() const {
 
 void Watch::act(Session &sess) {
     long id = std::stol(sess.getfirst());
-    if(id > 0 && id <= sess.getcontent().size()){
+    if(id > 0 && id <= (unsigned) sess.getcontent().size()){
         cout << "watching " + sess.getcontent().at(id-1)->getname() <<endl;
         sess.getActiveUser().addtohistory(sess.getcontent().at(id-1));
         complete();
@@ -180,9 +182,12 @@ std::string PrintActionsLog::toString() const {
 std::string BaseAction::substring(std::string action) const {
     if (status == ERROR) {
         return action + " ERROR: " + errorMsg;
-    } else if (status == COMPLETED){
+    } else if (status == COMPLETED) {
         return action + " COMPLETED";
-    } else if (status == PENDING)
+    }
+//    } else if (status == PENDING)
+//        return action + " PENDING";
+    else
         return action + " PENDING";
 }
 

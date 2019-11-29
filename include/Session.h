@@ -26,7 +26,7 @@ public:
     User& getActiveUser() const;
     std::string getfirst();
     std::string getsecond();
-    const unordered_map<std::string,User*> getuserMap() const;
+    unordered_map<std::string,User*> getuserMap() const;
     void deleteUser(std::string);
     void addusermap(std::string,User*);
     const vector<Watchable*>& getcontent() const;

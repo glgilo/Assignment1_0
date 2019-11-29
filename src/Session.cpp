@@ -28,9 +28,10 @@ void Session::clean(){
     userMap.clear();
 }
 
-Session::Session(const Session& other) {  // Copy Constructor
-         copy(other);
- }
+Session::Session(const Session& other): content({}), actionsLog({}), userMap({}), activeUser(), command(""), first(""), second("") {  // Copy Constructor
+    copy(other);
+    activeUser = userMap[other.getActiveUser().getName()];
+}
 
  Session& Session::operator=(const Session &other){ // Copy assignment operator
     if(this == &other){
@@ -41,8 +42,9 @@ Session::Session(const Session& other) {  // Copy Constructor
      return *this;
 }
 
-Session::Session(Session&& other) { //Move Constructor
+Session::Session(Session&& other):content({}), actionsLog({}), userMap({}), activeUser(), command(""), first(""), second("") { //Move Constructor
     move(other);
+    activeUser = userMap[other.getActiveUser().getName()];
 }
 
 Session& Session::operator=(Session &&other) { //Move assignment operator
@@ -67,11 +69,10 @@ void Session::move(Session &other) {
         userMap.insert(user);
         other.userMap[user.first]=nullptr;
     }
-    activeUser = userMap[other.getActiveUser().getName()];
 }
 
 void Session::copy(const Session &other) {
-    for (int i = 0; i < other.getcontent().size(); i++)
+    for (int i = 0;(unsigned) i < other.getcontent().size(); i++)
         content.push_back(other.getcontent().at(i)->clone());
     for (pair<string,User*> user: other.getuserMap()) {
         User* temp = user.second->clone();
@@ -80,10 +81,9 @@ void Session::copy(const Session &other) {
     }
     for (BaseAction* action: other.getactionsLog())
         actionsLog.push_back(action->clone());
-    activeUser = userMap[other.getActiveUser().getName()];
 }
 
-Session::Session(const std::string &_configFilePath) {
+Session::Session(const std::string &_configFilePath): content({}), actionsLog({}), userMap({}), activeUser(), command(""), first(""), second("") {
     std::ifstream i(_configFilePath);
     json j;
     i>>j;
@@ -99,10 +99,10 @@ Session::Session(const std::string &_configFilePath) {
     }
     for(json& series : tvSeries){
         json season = series["seasons"];
-        for(int i = 0; i < season.size(); i++){
-            for(int j = 1; j<= season[i]; j++){
-                auto* episode = new Episode(id, series["name"], series["episode_length"], i+1, j,series["tags"]);
-                if(i== season.size()-1 && j==season[i]) {
+        for(int k = 0;(unsigned) k < season.size(); k++){
+            for(int l = 1;(unsigned) l<= season[k]; l++){
+                auto* episode = new Episode(id, series["name"], series["episode_length"], k+1, l,series["tags"]);
+                if((unsigned)k == season.size()-1 && l == season[k]) {
                     episode->setNextEpisodeId(defId);
                 }
                 else{
@@ -115,7 +115,7 @@ Session::Session(const std::string &_configFilePath) {
     }
     User *newUser = new LengthRecommenderUser("default");
     addusermap("default",newUser);
-    activeUser = newUser;
+    activeUser = newUser;;
 }
 
 User& Session::getActiveUser() const {
@@ -131,17 +131,13 @@ std::string Session::getsecond() {
     return second;
 }
 
-const unordered_map <std::string,User*> Session::getuserMap() const {
+unordered_map <std::string,User*> Session::getuserMap() const {
     return userMap;
 }
 
 void Session::deleteUser(std::string userToDel){
     userMap.erase(userToDel);
 }
-
-//void Session::duplicateUser(std::string userToDup, User* newUser) {
-//    newUser = userMap[userToDup];
-//}
 
 void Session::addusermap(std::string _name, User *_newuse) {
     userMap[_name] = _newuse;
@@ -159,7 +155,6 @@ void Session::changeactiveuser(User* user)  {
     activeUser = user;
 }
 
-//Session::~Session() {}
 void Session::start() {
     printf("SPLFLIX is now on!"  "\n" );
 
@@ -171,30 +166,25 @@ void Session::start() {
         std::getline(iss,command,' ');
         std::getline(iss,first,' ');
         std::getline(iss,second,' ');
-//        cin >> command;
         if(command == "createuser"){
-//            cin >> first;
-//            cin >> second;
             BaseAction *newuser = new CreateUser();
             newuser->act(*this);
             actionsLog.push_back(newuser);
         }
         else if(command == "changeuser"){
-//            cin >> first;
             BaseAction *changeuser = new ChangeActiveUser();
             changeuser->act(*this);
             actionsLog.push_back(changeuser);
         }
 
         else if(command == "watch"){
-//            cin >> first;
             BaseAction *watch = new Watch();
             watch->act(*this);
             actionsLog.push_back(watch);
             cout<< " continue watching? [y/n]" <<endl;
             cin >> second;
             if(second != "y" && second !="n"){
-                cout << "Invalid Command" << endl;
+                cout << "Invalid Command, please enter [y/n]" << endl;
             }
             while(second == "y") {
                 std::getline(iss, second, ' ');
@@ -207,7 +197,7 @@ void Session::start() {
                 cout<< ", continue watching? [y/n]" <<endl;
                 cin >> second;
                 if(second != "y" && second !="n"){
-                    cout << "Invalid Command" << endl;
+                    cout << "Invalid Command, please enter [y/n]" << endl;
                 }
             }
             getline(std::cin,inputLine);
@@ -219,15 +209,14 @@ void Session::start() {
             actionsLog.push_back(log);
         }
         else if(command == "deleteuser"){
-//            cin >> first;
             BaseAction *deleteuser = new DeleteUser();
             deleteuser->act(*this);
             actionsLog.push_back(deleteuser);
         }
         else if (command == "content"){
-            BaseAction *content = new PrintContentList();
-            content->act(*this);
-            actionsLog.push_back(content);
+            BaseAction *printContent = new PrintContentList();
+            printContent->act(*this);
+            actionsLog.push_back(printContent);
         }
         else if (command == "watchhist"){
             BaseAction *watchlist = new PrintWatchHistory();
@@ -235,8 +224,6 @@ void Session::start() {
             actionsLog.push_back(watchlist);
         }
         else if(command=="dupuser"){
-//            cin >> first;
-//            cin >> second;
             BaseAction *duplicateUser = new DuplicateUser();
             duplicateUser->act(*this);
             actionsLog.push_back(duplicateUser);
@@ -254,6 +241,7 @@ void Session::start() {
 }
 Session Session::test (){
     Session s("/users/studs/bsc/2020/igale/CLionProjects/Assignment1_0/config1.json");
+    s.start();
     return s;
 }
 

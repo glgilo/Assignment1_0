@@ -43,13 +43,10 @@ long Episode::getNextId(Watchable *) const {
     return nextEpisodeId;
 }
 
-Episode::Episode(long _id, const std::string &_seriesName, int _length, int _season, int _episode, const std::vector<std::string> &_tags):  Watchable(_id, _length, _tags), season(_season), episode(_episode), seriesName(_seriesName) {}
+Episode::Episode(long _id, const std::string &_seriesName, int _length, int _season, int _episode, const std::vector<std::string> &_tags): seriesName(_seriesName), season(_season), episode(_episode), nextEpisodeId(), Watchable(_id, _length, _tags) {}
 std::string Episode::toString() const {
     std::string outputtags = "";
     for(std::string tag1 : gettags()){
-//        if(tag1 == gettags().at(gettags().size()-1)){
-//            outputtags = outputtags + tag1;
-//        }
         outputtags = outputtags + tag1 +", ";
     }
     if (outputtags.at(outputtags.size()-2) == ',')

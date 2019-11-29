@@ -8,7 +8,7 @@ using namespace std;
 
 User::~User() {};
 
-User::User(const std::string &_name): name(_name) {}
+User::User(const std::string &_name): history(), name(_name) {}
 std::string User::getName() const {
     return name;
 }
@@ -28,24 +28,29 @@ std::string GenreRecommenderUser::getAlgoName() {
     return algoName;
 }
 
-LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name)   {
-    algoName = "len";
+LengthRecommenderUser::LengthRecommenderUser(const std::string &_name): User (_name), algoName("len")  {
+    //algoName = "len";
 }
 
 Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
     float avg = 0;
+    int maxLength = 0;
     for(Watchable* hisCont: history){
-        avg = avg + hisCont->getlength();
+        avg = avg + (float)hisCont->getlength();
+    }
+    for(Watchable* cont: s.getcontent()){
+        if (cont->getlength() >= maxLength)
+            maxLength = cont->getlength();
     }
     avg = avg/history.size();
     bool seen = false;
     std::string defaultName = "";
     std::vector<std::string> defaultTag;
-    Watchable* temp = new Movie(-1, defaultName ,INTMAX_MAX, defaultTag);
+    Watchable* temp = new Movie(-1, defaultName ,maxLength*2, defaultTag);
     Watchable* nextRec = temp;
-    for(int i = 1; i < s.getcontent().size(); i++){
-       if (abs(nextRec->getlength()-avg) > abs(s.getcontent().at(i)->getlength()-avg) ){
-           for(int j = 0; j < history.size() && !seen; j++) {
+    for(int i = 1;(unsigned)i < s.getcontent().size(); i++){
+       if (abs((float)nextRec->getlength()-avg) > abs((float)s.getcontent().at(i)->getlength()-avg) ){
+           for(int j = 0;(unsigned) j <  history.size() && !seen; j++) {
                if(s.getcontent().at(i) == history.at(j))
                    seen = true;
            }
@@ -60,18 +65,19 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
     return nextRec;
 }
 
-RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name) {
-    lastRecId = 0;
-    algoName = "rer";
+RerunRecommenderUser::RerunRecommenderUser(const std::string &_name): User(_name), lastRecId(0), algoName("rer") {
+//    lastRecId = 0;
+//    algoName = "rer";
 }
 Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
-    lastRecId = (lastRecId + 1) % history.size();
+    //lastRecId = (lastRecId + 1) % (long)history.size();
+    lastRecId = (history.at(history.size()-1)->getid() + 1) % (long)history.size();
     Watchable* nextRec = history.at(lastRecId);
     return nextRec;
 }
 
-GenreRecommenderUser::GenreRecommenderUser(const std::string &_name): User(_name) {
-    algoName = "gen";
+GenreRecommenderUser::GenreRecommenderUser(const std::string &_name): User(_name), algoName("gen") {
+//    algoName = "gen";
 }
 
 std::string findMaxName(std::unordered_map<std::string,int> &tagMax) {
@@ -112,13 +118,13 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
     }
     Watchable* nextRec;
     bool Watched = false;
-    while (tagCount.size() != 0) {
+    while (!tagCount.empty()) {
         maxTagName = findMaxName(tagCount);
-        for (int i = 0; i < s.getcontent().size(); i++) {
-            for (int j = 0; j < s.getcontent().at(i)->gettags().size() && !Watched; j++) {
+        for (int i = 0;(unsigned)i < s.getcontent().size(); i++) {
+            for (int j = 0;(unsigned) j < s.getcontent().at(i)->gettags().size() && !Watched; j++) {
                 if (maxTagName == s.getcontent().at(i)->gettags().at(j)) {
                     nextRec = s.getcontent().at(i);
-                    for (int k = 0; k < history.size() && !Watched; k++) {
+                    for (int k = 0;(unsigned) k < history.size() && !Watched; k++) {
                         if (s.getcontent().at(i) == history.at(k)) {
                             Watched = true;
                             nextRec = nullptr;
@@ -129,7 +135,7 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
                     }
                 }
             }
-            if (i != s.getcontent().size() && Watched) {
+            if ((unsigned)i != s.getcontent().size() && Watched) {
                 Watched = false;
             }
         }
@@ -166,15 +172,15 @@ User* GenreRecommenderUser::clone() {
 }
 
 void User::fixHistory(Session &sess) {
-    int id = 0;
-    for(int i = 0; i < this->get_history().size(); i++){
+    long id = 0;
+    for(int i = 0;(unsigned)i < this->get_history().size(); i++){
         id = this->get_history().at(i)->getid();
         history.at(i) = sess.getcontent().at(id - 1);
     }
 }
 
 void User::copyHistory(User& other) {
-    for (int i = 0; i < this->get_history().size(); i++){
+    for (int i = 0; (unsigned) i < this->get_history().size(); i++){
         other.addtohistory(this->get_history().at(i));
     }
 }
