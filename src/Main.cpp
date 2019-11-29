@@ -12,7 +12,7 @@ int main(int argc, char** argv){
     s->start();
 //    Session s3 = *s;
     Session s2 = *s;
-    Session s4 = std::move(s->test());
+//    Session s4 = std::move(s->test());
     delete (s);
     s2.start();
 //    s3=s2;

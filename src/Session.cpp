@@ -28,7 +28,7 @@ void Session::clean(){
     userMap.clear();
 }
 
-Session::Session(const Session& other): content({}), actionsLog({}), userMap({}), activeUser(), command(""), first(""), second("") {  // Copy Constructor
+Session::Session(const Session& other): content(), actionsLog(), userMap(), activeUser(), command(""), first(""), second("") {  // Copy Constructor
     copy(other);
     activeUser = userMap[other.getActiveUser().getName()];
 }
@@ -42,7 +42,7 @@ Session::Session(const Session& other): content({}), actionsLog({}), userMap({})
      return *this;
 }
 
-Session::Session(Session&& other):content({}), actionsLog({}), userMap({}), activeUser(), command(""), first(""), second("") { //Move Constructor
+Session::Session(Session&& other):content(), actionsLog(), userMap(), activeUser(), command(""), first(""), second("") { //Move Constructor
     move(other);
     activeUser = userMap[other.getActiveUser().getName()];
 }
@@ -83,7 +83,7 @@ void Session::copy(const Session &other) {
         actionsLog.push_back(action->clone());
 }
 
-Session::Session(const std::string &_configFilePath): content({}), actionsLog({}), userMap({}), activeUser(), command(""), first(""), second("") {
+Session::Session(const std::string &_configFilePath): content(), actionsLog(), userMap(), activeUser(), command(""), first(""), second("") {
     std::ifstream i(_configFilePath);
     json j;
     i>>j;
@@ -239,9 +239,9 @@ void Session::start() {
         }
     }
 }
-Session Session::test (){
-    Session s("/users/studs/bsc/2020/igale/CLionProjects/Assignment1_0/config1.json");
-    s.start();
-    return s;
-}
+//Session Session::test (){
+//    Session s("/users/studs/bsc/2020/igale/CLionProjects/Assignment1_0/config1.json");
+//    s.start();
+//    return s;
+//}
 
