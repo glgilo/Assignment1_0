@@ -18,11 +18,11 @@ public:
     Session(const Session&); // Copy Constructor
     Session(Session&&); //Move Constructor
     Session &operator=(const Session&);// Copy assignment operator
-    Session &operator=(const Session&&); //Move assignment operator
+    Session &operator=(Session&&); //Move assignment operator
     void start();
     void clean();
     void copy(const Session&);
-    void move(const Session &other);
+    void move(Session &other);
     User& getActiveUser() const;
     std::string getfirst();
     std::string getsecond();
@@ -32,6 +32,7 @@ public:
     const vector<Watchable*>& getcontent() const;
     const vector<BaseAction*>& getactionsLog() const;
     void changeactiveuser(User*);
+    Session test (); ///////////////////////////////////////////////////////////////////////////////
 private:
     std::vector<Watchable*> content;
     std::vector<BaseAction*> actionsLog;

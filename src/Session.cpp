@@ -45,7 +45,7 @@ Session::Session(Session&& other) { //Move Constructor
     move(other);
 }
 
-Session& Session::operator=(const Session &&other) { //Move assignment operator
+Session& Session::operator=(Session &&other) { //Move assignment operator
     if(this == &other){
         return *this;
     }
@@ -54,18 +54,18 @@ Session& Session::operator=(const Session &&other) { //Move assignment operator
     return *this;
 }
 
-void Session::move(const Session &other) {
-    for (Watchable *cont: other.getcontent()) {
-        content.push_back(cont);
-        cont = nullptr;
+void Session::move(Session &other) {
+    for (int i = 0;(unsigned) i < other.content.size(); i++) {
+        content.push_back(other.content.at(i));
+        other.content.at(i) = nullptr;
     }
-    for (BaseAction* action: other.getactionsLog()) {
-        actionsLog.push_back(action);
-        action = nullptr;
+    for (int i = 0;(unsigned) i < other.actionsLog.size(); i++) {
+        actionsLog.push_back(other.actionsLog.at(i));
+        other.actionsLog.at(i) = nullptr;
     }
-    for (pair<string,User*> user: other.getuserMap()) {
+    for (auto user: other.getuserMap()) {
         userMap.insert(user);
-        user.second = nullptr;
+        other.userMap[user.first]=nullptr;
     }
     activeUser = userMap[other.getActiveUser().getName()];
 }
@@ -251,6 +251,9 @@ void Session::start() {
             cout<<"Illegal command"<<endl;
         }
     }
-//    cout <<"you enterd" << command; //stam hadpsa!@#!@#
+}
+Session Session::test (){
+    Session s("/users/studs/bsc/2020/igale/CLionProjects/Assignment1_0/config1.json");
+    return s;
 }
 

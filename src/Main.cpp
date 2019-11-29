@@ -10,8 +10,9 @@ int main(int argc, char** argv){
     }
     Session* s = new Session(argv[1]);
     s->start();
-    Session s3 = *s;
+//    Session s3 = *s;
     Session s2 = *s;
+    Session s4 = std::move(s->test());
     delete (s);
     s2.start();
 //    s3=s2;
@@ -19,3 +20,4 @@ int main(int argc, char** argv){
 //    s2.start();
     return 0;
 }
+
