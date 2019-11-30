@@ -53,6 +53,7 @@ Session& Session::operator=(Session &&other) { //Move assignment operator
     }
     clean();
     move(other);
+    activeUser = userMap[other.getActiveUser().getName()];
     return *this;
 }
 
@@ -181,10 +182,11 @@ void Session::start() {
             BaseAction *watch = new Watch();
             watch->act(*this);
             actionsLog.push_back(watch);
-            cout<< " continue watching? [y/n]" <<endl;
+            cout<< ", continue watching? [y/n]" <<endl;
             cin >> second;
-            if(second != "y" && second !="n"){
+            while(second != "y" && second !="n"){
                 cout << "Invalid Command, please enter [y/n]" << endl;
+                cin >> second;
             }
             while(second == "y") {
                 std::getline(iss, second, ' ');
@@ -196,8 +198,9 @@ void Session::start() {
                     break;
                 cout<< ", continue watching? [y/n]" <<endl;
                 cin >> second;
-                if(second != "y" && second !="n"){
+                while(second != "y" && second !="n"){
                     cout << "Invalid Command, please enter [y/n]" << endl;
+                    cin >> second;
                 }
             }
             getline(std::cin,inputLine);
@@ -239,9 +242,4 @@ void Session::start() {
         }
     }
 }
-//Session Session::test (){
-//    Session s("/users/studs/bsc/2020/igale/CLionProjects/Assignment1_0/config1.json");
-//    s.start();
-//    return s;
-//}
 

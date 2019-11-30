@@ -2,7 +2,7 @@
 #include <string>
 #include "../include/Session.h"
 #include "../include/User.h"
-//Watchable::Watchable(): id(-1), length(-1),tags() {}
+
 Watchable::Watchable(long _id, int __length, const std::vector<std::string> &_tags): id(_id), length(__length), tags(_tags) {}
 
 Watchable::~Watchable() {}
@@ -43,7 +43,7 @@ long Episode::getNextId(Watchable *) const {
     return nextEpisodeId;
 }
 
-Episode::Episode(long _id, const std::string &_seriesName, int _length, int _season, int _episode, const std::vector<std::string> &_tags): seriesName(_seriesName), season(_season), episode(_episode), nextEpisodeId(), Watchable(_id, _length, _tags) {}
+Episode::Episode(long _id, const std::string &_seriesName, int _length, int _season, int _episode, const std::vector<std::string> &_tags): Watchable(_id, _length, _tags), seriesName(_seriesName), season(_season), episode(_episode), nextEpisodeId() {}
 std::string Episode::toString() const {
     std::string outputtags = "";
     for(std::string tag1 : gettags()){

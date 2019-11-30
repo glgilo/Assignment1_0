@@ -1,7 +1,6 @@
 #include "../include/User.h"
 #include "../include/Session.h"
 #include "../include/Watchable.h"
-#include <iostream>
 #include <algorithm>
 #include <unordered_map>
 using namespace std;
@@ -59,9 +58,11 @@ Watchable* LengthRecommenderUser::getRecommendation(Session &s) {
        }
        seen = false;
    }
-    delete(temp);
-    if (nextRec->getname() == defaultName)
+    if (nextRec->getname() == defaultName) {
+        delete (temp);
         return nullptr;
+    }
+    delete(temp);
     return nextRec;
 }
 
